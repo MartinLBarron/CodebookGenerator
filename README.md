@@ -1,2 +1,2 @@
 # codebook
-Simple R/RMarkdown codebook generator
+This is a simple R codebook generator. It produces a rmarkdown document that can be knit into an HTML document.
