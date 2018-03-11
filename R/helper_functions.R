@@ -15,6 +15,7 @@ chunk.wrapper <- function(x, ..., outfile=fileConn, options=c("echo=FALSE", "war
          outfile = outfile)
   writer(x, ..., outfile = outfile)
   writer("```", outfile = outfile)
+  writer("")
 }
 
 #' An rmarkdown wrapper for a figure
@@ -78,6 +79,53 @@ getDisplayType <- function(var){
 
   return (displayType)
 }
+
+
+
+
+
+vnames <- names(iris)
+for (i in 1:length(iris)){
+  print(vnames[i])
+}
+
+myfunc <- function(v1) {
+  deparse(substitute(v1))
+}
+
+myfunc(foo)
+var <- iris[[1]]
+
+plotVariable <- function(var){
+  #we are passed a variable
+  displayType <- getDisplayType(var)
+  
+  if (displayType=="barLow"){
+    var <- factor(var)
+    ggplot() +
+      geom_bar(aes(x=var))
+  }else if (displayType=="barHigh"){
+    var<-factor(var)
+    ggplot() +
+      geom_bar(aes(x=var)) 
+  }else if (displayType=="histogram"){
+    gg <- paste0("ggplot() +
+                 geom_histogram(aes(x=var))")
+  } else if (displayType=="other"){
+    
+  }
+  
+}
+
+aggregateForBarplot <- function(v) {
+  outF <- data.frame(table(v))
+  names(outF) <- c("x", "y")
+  outF
+}
+
+
+#plotVariable(df$hp)
+
 
 # t1 <- c(T,F,T,F,T,F)
 # is.character(iris$Species)
