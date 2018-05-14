@@ -1,11 +1,10 @@
 Package: CodebookGenerator
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Generates Codebook from DataFrame
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Martin Barron
+Maintainer: Martin Barron <barronm@uchicago.edu>
+Description: This program generates a codebook from a given DataFrame.
+License: Do you really want to use this? Really?
 Encoding: UTF-8
-LazyData: true
+LazyData: trues

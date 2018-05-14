@@ -140,15 +140,4 @@ createCodebook <- function(df, outname="test", savein="examples", overwrite=T, r
 }
 
 
-## testing
-library(forcats)
-data(gss_cat)
-#createCodebook(iris, outname="iris")
-
-# gss <- readRDS("gss_short.rds")
-# df <-gss
-createCodebook(gss, outname = "gss")
-#createCodebook(dummyData(), outname="dummyData")
-createCodebook(iris, outname="iris")
-createCodebook(mtcars, outname="mtcars")
 
