@@ -1,5 +1,6 @@
 library(ggplot2)
 library(knitr)
+
 source("R/helper_functions.R")
 
 
@@ -16,24 +17,32 @@ source("R/helper_functions.R")
 #' @export
 #' 
 
-createCodebook <- function(df, outname="examples/test", overwrite=T, reportTitle="My Codebook", output="html"){
+createCodebook <- function(df, outname="test", savein="examples", overwrite=T, reportTitle="My Codebook", output="html"){
 
   #construct names
   outRmd = paste0(outname, ".Rmd")
   outHtml = paste0(outname, ".html")
   
+  filepathRmd <- file.path(savein, outRmd)
+  filepathHtml <- file.path(savein, outHtml)
+  
+  #get database name
+  dfname <- deparse(substitute(df))
+  print(dfname)
   
   #delete existing files, if requested
-  if (overwrite & file.exists(outRmd)){
-    file.remove(outRmd)
+  if (overwrite & file.exists(filepathRmd)){
+    file.remove(filepathRmd)
   }
-  if (overwrite & file.exists(outHtml)){
-    file.remove(outHtml)
+  if (overwrite & file.exists(filepathHtml)){
+    file.remove(filepathHtml)
   }
   
+  
   # Open file connections
-  fileConn <<- file(outRmd, "w") 
+  fileConn <<- file(filepathRmd, "w") 
 
+  ####################################### HEADER ################################
   ## write YAML preamble
   writer("---")
   writer(paste("title:", reportTitle))
@@ -46,46 +55,100 @@ createCodebook <- function(df, outname="examples/test", overwrite=T, reportTitle
   
   ## include packages as a first chunk
   secretChunk.wrapper("library(ggplot2)\nlibrary(pander)")
+  secretChunk.wrapper(paste0("dftest <- ", dfname))
   
   #Write basic codebook information
-  writer("## Basic Information")
+  writer("## Data Report Overview")
+  labels <- c("Number of observations", "Number of variables")
+  values <- c(nrow(df), length(df))
+  overview <- data.frame(Feature=labels, Value=values)
+  writer(pander::pandoc.table.return(overview))
   writer("***")
   #write TOC
-  writer("## Table of contents")
+  writer("## Summary Table")
+  
+  tab <- calcSummaryTable(df)
+  writer(pander::pandoc.table.return(tab))
+  #Variables <- names()
+  #sumTab <- data.frame(labels=labs, Variable=vars, Class=classes, Unique=uniques, pMissing=missings")
   writer("***")
+  
+  
+  ####################################### MAIN VARIABLE LOOP ################################
   #Main variable loop: for each column, write out results
+  writer("## Variables")
   varNames <- names(df)
   for (i in 1:length(df)){
     #determine type
-    writer(paste0("##", varNames[i]))
-    var <- df[i]
-    outF <- data.frame(table(var))
-    names(outF) <- c("x","y")
-   gg <- paste0("ggplot(",deparse(outF),", aes_string(x = 'x', y = 'y')) +
-     geom_bar(stat = 'identity')")
-   
-    row.wrapper("this is one col", fig.wrapper(deparse(gg))) #fig.wrapper("plot(iris$Sepal.Length)"))
+    var <- df[[i]]
+    varName <- varNames[i]
+    # Write header
+    writer(paste0("### ",i,") ", varName))
     
-    # summaryTable <- tableVariable(var)
-    # summaryGraphic <- plotVariable(var)
-    # 
+    #write label if one exists
+    if (!is.null(attr(var, "labels", exact=T))){
+      writer(paste ("####",attr(var, "labels", exact=T)))
+    }
+
+    #Get Variable metadata and turn to rmarkdown table
+    basicMeta <- codebookMetadataSummarize(var)
+    basicMeta <- pander::pandoc.table.return(basicMeta)
+    
+    #Get Variable data table
+    datatable <- codebookDataTableSummarize(var)
+    datatable <- pander::pandoc.table.return(datatable)
+   
+    #Combine metadata table and data table into single string
+    tab <- paste(basicMeta, "\n\n", datatable)
+
+    #Get Visualization for variable
+    vis<- codebookVisualize(var,varName)
+    # dt <- getDisplayType(var)
+    # print(dt)
+    # if (dt=="histogram"){
+    #   kind<-"numeric"
+    #   varPlot=factor(var)
+    #   vis <- paste0("ggplot(data=dftest)+geom_histogram(aes(",varNames[i],"),color='black',bins=30)")
+    # } else {
+    #   kind<-"character"
+    #   vis <- paste0("dftest[,'",paste0(varNames[i],"_new"),"']<-factor(dftest[,'",varNames[i],"'])\n
+    #                 ggplot(data=dftest)+geom_bar(aes(",paste0(varNames[i],"_new"),"))")
+    # }
+
+    # row.wrapper(
+    #   tab,
+    #   fig.wrapper(vis)
+    # )
+    row.wrapper1(
+      basicMeta,
+      datatable,
+      fig.wrapper(vis)
+    )
+    #write divider before moving to next variable
     writer ("***")
   }
-  
+
+  ####################################### FOOTER ################################
+
   ## Force flush and close connection
   flush(fileConn)
   close(fileConn)
   
   #Knit document
-  rmarkdown::render(outRmd, 'html_document', outHtml)
+  rmarkdown::render(filepathRmd, 'html_document', outHtml)
   
 }
-createCodebook(iris)
 
 
+## testing
+library(forcats)
+data(gss_cat)
+#createCodebook(iris, outname="iris")
 
-
-
-
-
+# gss <- readRDS("gss_short.rds")
+# df <-gss
+createCodebook(gss, outname = "gss")
+#createCodebook(dummyData(), outname="dummyData")
+createCodebook(iris, outname="iris")
+createCodebook(mtcars, outname="mtcars")
 
