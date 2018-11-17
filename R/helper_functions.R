@@ -1,34 +1,5 @@
 
 
-# Create a dummy dataset --------------------------------------------------
-dummyData <- function(n=1000, seed=1284232){
-  set.seed(seed)
-
-  df <- data.frame(
-    id = seq(1,n,by=1), 
-    char = replicate(n, paste(sample(LETTERS, 2, replace=TRUE), collapse="")),
-    const = 3,
-    allNA1 = NA,
-    allNA2 = "",
-    catg1 = factor(letters[1:4]),
-    catg2 = letters[1:10],
-    num = sample(1:600,n, replace = TRUE), 
-    num2 = runif(n,0,100),
-    log1 = ifelse(sign(rnorm(n))==-1,T,F),
-    log2 = ifelse(sign(rnorm(n))==-1,"true","false"),
-    log3 = ifelse(sign(rnorm(n))==-1,"t","f"),
-    log4 = ifelse(sign(rnorm(n))==-1,"yes","no"),
-    log5 = ifelse(sign(rnorm(n))==-1,1,0),
-    dt1 = seq(from=as.Date("1970/1/1"), by="day", length.out = n),
-    dt2 = rep("1970/1/1", n),
-    dt3 = rep("September 1, 2000", ),
-    dt4 = rep("12/18/1973", n),
-    
-    stringsAsFactors = F
-  )
-  return(df)
-}
-
 # writes output to file ---------------------------------------------------
 writer <- function(x, ..., outfile=fileConn, sep="\n") {
   cat(paste0(x, ...), file=outfile, append=TRUE, sep=sep)
