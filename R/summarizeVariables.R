@@ -12,7 +12,7 @@ summarizeVariables <- function(df){
   varOrder <- seq(1:length(df))
   vars <- sapply(names(df), function(x) paste0("<a href=\"#",x,"\">",x,"</a>"))
   uniques <- sapply(df, function(x)length(unique(x)))
-  missings <-sapply(df, function(x)sum(is.na(x))/length(x))
+  missings <-sapply(df, function(x)paste0(prettyNum(sum(is.na(x))/length(x)*100,digits=2),"%"))
   labs <-sapply(df, function(x)ifelse(is.null(attr(x, "label")[[1]]),"",attr(x, "label")[[1]]))
   labMissing<-sum(sapply(df, function(x)is.na(ifelse(is.null(attr(x, "label")[[1]]),NA,attr(x, "label")[[1]]))))
   classes <-sapply(names(df),determineVarType, df=df)

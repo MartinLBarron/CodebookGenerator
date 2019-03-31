@@ -1,10 +1,10 @@
 testing <- function(){
-
+  
   # get datasets
   gss <- readRDS("temp/data/gss_short.rds")
   crime <- readRDS("temp/data/crime2018.rds")
   crime <-crime[1:5000,]
-  dd <- dummyData()
+  dd <- mbRutilities::createDummyDataframe()
   
   #create test datasets
   createCodebook(iris, outputName="iris")

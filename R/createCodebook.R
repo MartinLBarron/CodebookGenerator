@@ -118,7 +118,7 @@ createCodebook <- function(df, outputName="codebook", saveLocation="temp/", over
     writer("")
     #write label (if one exists)
     if (!is.null(attr(var, "labels", exact=T))){
-      writer(paste ("#### ",attr(var, "labels", exact=T)))
+      writer(paste ("#### ",attr(var, "label", exact=T)))
     }
     varClass <-determineVarType(varName, df)
     #Write row of data of variable infromation

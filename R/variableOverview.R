@@ -13,7 +13,7 @@ variableOverview <-function(var){
   variableType=class(var)
   numMissing=sum(is.na(var))
   numValid=sum(!is.na(var))
-  numMissing = paste0(numMissing, " (", (numMissing/length(var))*100, "%)")
+  numMissing = paste0(numMissing, " (", prettyNum(numMissing/length(var)*100, digits=2), "%)")
   numUnique=length(unique(var))
   
   # Construct dataset of basic information
